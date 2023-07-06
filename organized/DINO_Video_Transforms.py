@@ -248,10 +248,13 @@ class DINOViewTransform:
         video = video_transforms.resize_video(video, self.crop_size[2], self.crop_size[1])
         video = video_transforms.random_horizontal_flip(video, self.hf_prob)
         video = video_transforms.random_vertical_flip(video, self.vf_prob)
-        video = video_transforms.random_rotation(video, self.rr_prob, self.rr_degrees)
-        video = video_transforms.random_color_jitter(video, self.cj_prob, self.cj_strength, self.cj_bright, self.cj_contrast, self.cj_sat, self.cj_hue)
-        video = video_transforms.random_gray_scale(video, self.random_gray_scale)
-        video = video_transforms.gaussian_blur(video, self.gaussian_blur, self.kernel_size, self.kernel_scale, self.sigmas)
-        video = video_transforms.solarization(video, self.solarization_prob)
+        video = video_transforms.random_rotation(video, self.rr_prob, 0, self.rr_degrees)
+        video = video_transforms.random_jitter(video, self.cj_prob, self.cj_strength * self.cj_bright,
+                                               self.cj_strength * self.cj_contrast,
+                                               self.cj_strength * self.cj_sat,
+                                               self.cj_strength * self.cj_hue)
+        video = video_transforms.random_grayscale(video, self.random_gray_scale)
+        video = video_transforms.random_gaussian_blur(video, self.gaussian_blur, self.sigmas)
+        video = video_transforms.random_solarize(video, self.solarization_prob)
         # maybe include normalize
         return video

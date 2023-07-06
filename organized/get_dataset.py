@@ -6,6 +6,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+from organized.DINO_Video_Transforms import DINOVideoTransform
 
 class CustomDataset(torch.utils.data.Dataset):
     def __init__(self, root_dir, transform=None):
@@ -48,11 +49,15 @@ class CustomDataset(torch.utils.data.Dataset):
 
         video_tensor = torch.stack(frames)  # Stack frames along the time dimension
 
+        #apply transform to video
+        dino_transform = DINOVideoTransform(global_crop_size=(224, 224, 4), local_crop_size=(224, 224, 4))
+        video_tensor = dino_transform(video_tensor)
+
         return video_tensor, label
 
 def get_hmdb51_dataset():
 
-    root_dir = "/home/andrewzabelo/Documents/hmdb51_extracted"
+    root_dir = "/home/andrew/Downloads/hmdb51_org"
     dataset = CustomDataset(root_dir)
     return dataset
 

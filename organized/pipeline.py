@@ -28,9 +28,9 @@ class DINO(pl.LightningModule):
         # Instantiate the Vision Transformer model
         model = ViT(
             image_size=224,  # Input image size
-            image_time=160,  # Input image time
+            image_time=4,  # Input image time
             patch_size=16,  # Patch size
-            patch_time=8,  # Patch time
+            patch_time=2,  # Patch time
             num_classes=input_dim,  # Number of output classes
             dim=768,  # Embedding dimension
             depth=12,  # Number of transformer blocks
@@ -85,17 +85,15 @@ def pretrain():
 
     dataset = get_hmdb51_dataset()
 
-    dino_transform = DINOVideoTransform(global_crop_size=(224,224,160), local_crop_size=(224,224,160))
-    dataset = LightlyDataset.from_torch_dataset(dataset, transform=dino_transform)
-
-    print(dataset[0])
+    # dino_transform = DINOVideoTransform(global_crop_size=(224,224,160), local_crop_size=(224,224,160))
+    dataset = LightlyDataset.from_torch_dataset(dataset)
 
     model = DINO()
 
     dataloader = torch.utils.data.DataLoader(
         dataset,
-        batch_size=1,
-        shuffle=True,
+        batch_size=64,
+        shuffle=False,
         drop_last=True,
         num_workers=0,
     )

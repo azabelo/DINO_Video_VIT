@@ -167,7 +167,7 @@ def random_grayscale(video_tensor, p):
         return grayscale_video
     return video_tensor
 
-def random_solarize(video, p, threshold):
+def random_solarize(video, p, threshold=0.5):
     if torch.rand((1,)).item() < p:
         # Apply the solarize transformation to each frame in the video tensor
         solarized_frames = []
