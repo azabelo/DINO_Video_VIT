@@ -31,3 +31,7 @@ frames = [[ax.imshow(imgs[i])] for i in range(len(imgs))]
 ani = animation.ArtistAnimation(fig, frames, interval=20, blit=False)
 
 plt.show()
+
+
+
+

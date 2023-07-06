@@ -50,24 +50,28 @@ class CustomDataset(torch.utils.data.Dataset):
 
         return video_tensor, label
 
-# Example usage:
-root_dir = "/home/andrewzabelo/Documents/hmdb51_extracted"
+def get_hmdb51_dataset():
 
-dataset = CustomDataset(root_dir)
+    root_dir = "/home/andrewzabelo/Documents/hmdb51_extracted"
+    dataset = CustomDataset(root_dir)
+    return dataset
+
+#create a dataloader for the dataset
+#dataloader = torch.utils.data.DataLoader(dataset, batch_size=4, shuffle=True, num_workers=1)
 
 # Access the video and label of the first sample
-video, label = dataset[1]
-video = video.to(torch.int)
-print(label)
-print(video.shape)
-print(video[0])
-
-fig, ax = plt.subplots()
-
-imgs = video.permute(0,2,3,1) # Permuting to HxWxC format
-frames = [[ax.imshow(imgs[i])] for i in range(len(imgs))]
-
-ani = animation.ArtistAnimation(fig, frames, interval=100, blit=False)
-
-plt.show()
+# video, label = dataset[1]
+# video = video.to(torch.int)
+# print(label)
+# print(video.shape)
+# print(video[0])
+#
+# fig, ax = plt.subplots()
+#
+# imgs = video.permute(0,2,3,1) # Permuting to HxWxC format
+# frames = [[ax.imshow(imgs[i])] for i in range(len(imgs))]
+#
+# ani = animation.ArtistAnimation(fig, frames, interval=100, blit=False)
+#
+# plt.show()
 
