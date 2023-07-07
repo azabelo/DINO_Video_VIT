@@ -18,7 +18,7 @@ import wandb
 import sys
 
 from vit_pytorch import ViT
-from get_dataset import get_hmdb51_dataset
+from organized.get_dataset import get_hmdb51_dataset
 
 class DINO(pl.LightningModule):
     def __init__(self):

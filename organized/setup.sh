@@ -80,5 +80,6 @@ while read -r package; do
     fi
 done < "$requirements_file"
 
+cd ..
 #run experiment
-python3 pipeline.py current_directory
+python3 organized/pipeline.py current_directory
