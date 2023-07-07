@@ -257,4 +257,5 @@ class DINOViewTransform:
         video = video_transforms.random_gaussian_blur(video, self.gaussian_blur, self.sigmas)
         video = video_transforms.random_solarize(video, self.solarization_prob)
         # maybe include normalize
+        video = video.permute(1,0,2,3)
         return video

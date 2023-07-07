@@ -28,9 +28,9 @@ class DINO(pl.LightningModule):
         # Instantiate the Vision Transformer model
         model = ViT(
             image_size=224,  # Input image size
-            image_time=4,  # Input image time
+            image_time=80,  # Input image time
             patch_size=16,  # Patch size
-            patch_time=2,  # Patch time
+            patch_time=8,  # Patch time
             num_classes=input_dim,  # Number of output classes
             dim=768,  # Embedding dimension
             depth=12,  # Number of transformer blocks
@@ -51,16 +51,19 @@ class DINO(pl.LightningModule):
         self.criterion = DINOLoss(output_dim=2048, warmup_teacher_temp_epochs=5)
 
     def forward(self, x):
+        print("forward student")
         y = self.student_backbone(x).flatten(start_dim=1)
         z = self.student_head(y)
         return z
 
     def forward_teacher(self, x):
+        print("forward teacher")
         y = self.teacher_backbone(x).flatten(start_dim=1)
         z = self.teacher_head(y)
         return z
 
     def training_step(self, batch, batch_idx):
+        print("training step")
         momentum = cosine_schedule(self.current_epoch, 10, 0.996, 1)
         update_momentum(self.student_backbone, self.teacher_backbone, m=momentum)
         update_momentum(self.student_head, self.teacher_head, m=momentum)
@@ -92,10 +95,10 @@ def pretrain():
 
     dataloader = torch.utils.data.DataLoader(
         dataset,
-        batch_size=64,
+        batch_size=1,
         shuffle=False,
         drop_last=True,
-        num_workers=0,
+        num_workers=12,
     )
 
     accelerator = "gpu" if torch.cuda.is_available() else "cpu"

@@ -2,6 +2,7 @@ import torch
 import torch.nn.functional as F
 import torchvision.transforms.functional as TF
 from torchvision.transforms import ColorJitter, ToPILImage, ToTensor
+import math
 import torchvision.models as models
 
 def random_time_crop(video, min_crop_ratio, max_crop_ratio):
@@ -57,7 +58,7 @@ def resize_video(video_tensor, time_size, spatial_size):
             frame_ratio = time_size / original_time_size
 
             # Calculate the number of times each frame should be duplicated
-            frame_duplications = torch.ceil(frame_ratio).int()
+            frame_duplications = math.ceil(frame_ratio)
 
             # Duplicate frames
             video_tensor = video_tensor.repeat_interleave(frame_duplications, dim=0)
