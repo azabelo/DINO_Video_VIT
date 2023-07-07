@@ -6,7 +6,7 @@
 file_url="http://serre-lab.clps.brown.edu/wp-content/uploads/2013/10/hmdb51_org.rar"
 
 # Specify the desired name for the downloaded file
-file_name="hmdb51_dataset"
+file_name="hmdb51_dataset.rar"
 
 # Download the file using curl
 curl -o "$file_name" "$file_url"
@@ -27,6 +27,7 @@ fi
 #unzip big file
 unrar x file_name
 
+file_name="hmdb51_dataset"
 cd file_name
 
 # Get the current directory
