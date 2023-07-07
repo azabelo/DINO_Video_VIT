@@ -55,10 +55,10 @@ class CustomDataset(torch.utils.data.Dataset):
 
         return video_tensor, label
 
-def get_hmdb51_dataset():
+def get_hmdb51_dataset(path_to_hmdb51):
 
-    root_dir = "/home/andrew/Downloads/hmdb51_org"
-    dataset = CustomDataset(root_dir)
+    #path_to_hmdb51 = "other path"
+    dataset = CustomDataset(path_to_hmdb51)
     return dataset
 
 #create a dataloader for the dataset

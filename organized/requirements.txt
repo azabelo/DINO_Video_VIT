@@ -1,0 +1,11 @@
+pytorch_lightning
+torch
+torchvision
+lightly
+numpy
+matplotlib
+torchmetrics
+wandb
+vit_pytorch
+opencv-python
+yt_dlp

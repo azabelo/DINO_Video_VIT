@@ -14,6 +14,8 @@ from lightly.utils.scheduler import cosine_schedule
 import torchmetrics
 import matplotlib.pyplot as plt
 import numpy as np
+import wandb
+import sys
 
 from random_tensor import yt_to_tensor
 from organized.DINO_Video_Transforms import DINOVideoTransform
@@ -26,7 +28,7 @@ class DINO(pl.LightningModule):
         input_dim = 1024
 
         # Instantiate the Vision Transformer model
-        model = ViT(
+        backbone = ViT(
             image_size=224,  # Input image size
             image_time=80,  # Input image time
             patch_size=16,  # Patch size
@@ -37,14 +39,15 @@ class DINO(pl.LightningModule):
             heads=12,  # Number of attention heads
             mlp_dim=3072  # Hidden dimension of the MLP
         )
-        backbone = model
 
         self.student_backbone = backbone
         self.student_head = DINOProjectionHead(
-            input_dim, 512, 64, 2048, freeze_last_layer=1
+            input_dim, 2048, 256, 2048, batch_norm=True
         )
         self.teacher_backbone = copy.deepcopy(backbone)
-        self.teacher_head = DINOProjectionHead(input_dim, 512, 64, 2048)
+        self.teacher_head = DINOProjectionHead(
+            input_dim, 2048, 256, 2048, batch_norm=True
+        )
         deactivate_requires_grad(self.teacher_backbone)
         deactivate_requires_grad(self.teacher_head)
 
@@ -73,43 +76,73 @@ class DINO(pl.LightningModule):
         teacher_out = [self.forward_teacher(view) for view in global_views]
         student_out = [self.forward(view) for view in views]
         loss = self.criterion(teacher_out, student_out, epoch=self.current_epoch)
+        wandb.log({"pretraining_loss": loss})
         return loss
 
     def on_after_backward(self):
         self.student_head.cancel_last_layer_gradients(current_epoch=self.current_epoch)
 
+    # def configure_optimizers(self):
+    #     optim = torch.optim.Adam(self.parameters(), lr=1e-5)
+    #     return optim
+
+    def set_params(self, lr_factor, max_epochs):
+        self.lr_factor = lr_factor
+        self.max_epochs = max_epochs
+
     def configure_optimizers(self):
-        optim = torch.optim.Adam(self.parameters(), lr=1e-5)
-        return optim
+        param = list(self.student_backbone.parameters()) + list(self.student_head.parameters())
+        optim = torch.optim.SGD(
+            param,
+            lr=6e-2 * self.lr_factor,
+            momentum=0.9,
+            weight_decay=5e-4,
+        )
+        cosine_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optim, self.max_epochs)
+        return [optim], [cosine_scheduler]
 
 
-def pretrain():
+def pretrain(path_to_hmdb51):
     print("starting pretraining")
+    wandb.init(project='DINO Video Pretraining')
 
-    dataset = get_hmdb51_dataset()
-
+    dataset = get_hmdb51_dataset(path_to_hmdb51)
     # dino_transform = DINOVideoTransform(global_crop_size=(224,224,160), local_crop_size=(224,224,160))
     dataset = LightlyDataset.from_torch_dataset(dataset)
 
+    #params
+    bs = 16
+    num_workers = 16
+    lr_factor = bs / 256
+    max_epochs = 10
+
     model = DINO()
+    model.set_params(lr_factor, max_epochs)
 
     dataloader = torch.utils.data.DataLoader(
         dataset,
-        batch_size=1,
-        shuffle=False,
+        batch_size=bs,
+        shuffle=True,
         drop_last=True,
-        num_workers=12,
+        num_workers=num_workers
     )
 
     accelerator = "gpu" if torch.cuda.is_available() else "cpu"
 
-    trainer = pl.Trainer(max_epochs=10, devices=1, accelerator=accelerator)
+    trainer = pl.Trainer(max_epochs=max_epochs, devices=1, accelerator=accelerator)
     trainer.fit(model=model, train_dataloaders=dataloader)
 
+    wandb.finish()
 
     # we need to reactivate requires grad to perform supervised backpropagation later
     activate_requires_grad(model.teacher_backbone)
     return model.student_backbone
 
 if __name__ == "__main__":
-    pretrained_model = pretrain()
+    if len(sys.argv) < 2:
+        print("Error: Please provide a string as an argument.")
+        exit(0)
+
+    # Get the input string from the command-line argument
+    path_to_hmdb51 = sys.argv[1]
+    pretrained_model = pretrain(path_to_hmdb51)
