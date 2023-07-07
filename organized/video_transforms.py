@@ -2,6 +2,7 @@ import torch
 import torch.nn.functional as F
 import torchvision.transforms.functional as TF
 from torchvision.transforms import ColorJitter, ToPILImage, ToTensor
+import torchvision.models as models
 
 def random_time_crop(video, min_crop_ratio, max_crop_ratio):
     """
@@ -53,7 +54,16 @@ def resize_video(video_tensor, time_size, spatial_size):
     if original_time_size != time_size:
         if original_time_size < time_size:
             # Upsample the video in the time dimension
-            video_tensor = F.interpolate(video_tensor.unsqueeze(0), size=(time_size,) + original_spatial_size, mode='nearest').squeeze(0)
+            frame_ratio = time_size / original_time_size
+
+            # Calculate the number of times each frame should be duplicated
+            frame_duplications = torch.ceil(frame_ratio).int()
+
+            # Duplicate frames
+            video_tensor = video_tensor.repeat_interleave(frame_duplications, dim=0)
+
+            # Trim or pad the video to the target number of frames
+            video_tensor = video_tensor[:time_size]
         else:
             # Downsample the video in the time dimension
             indices = torch.linspace(0, original_time_size - 1, time_size).long()
