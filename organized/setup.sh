@@ -10,6 +10,12 @@ file_name="hmdb51_dataset"
 
 # Download the file using curl
 curl -o "$file_name" "$file_url"
+# List all files in the current directory
+files=$(ls -p)
+
+# Print the list of files
+echo "Files in the current directory:"
+echo "$files"
 
 
 # Install unrar if not already installed
