@@ -17,8 +17,6 @@ import numpy as np
 import wandb
 import sys
 
-from random_tensor import yt_to_tensor
-from organized.DINO_Video_Transforms import DINOVideoTransform
 from vit_pytorch import ViT
 from organized.get_dataset import get_hmdb51_dataset
 
