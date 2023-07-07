@@ -28,7 +28,7 @@ fi
 mkdir -p hmdb51_unrared
 
 #unzip big file
-unrar x file_name hmdb51_unrared
+unrar x "$file_name" hmdb51_unrared
 
 
 cd hmdb51_unrared
