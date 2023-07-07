@@ -40,8 +40,8 @@ for rar_file in $rar_files; do
     unrar x "$rar_file"
 done
 
-# Delete all .rar files in the current directory
-rm *.rar
+## Delete all .rar files in the current directory
+#rm *.rar
 
 cd ..
 
