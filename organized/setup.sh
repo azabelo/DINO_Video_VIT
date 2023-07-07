@@ -27,8 +27,8 @@ fi
 #unzip big file
 unrar x file_name
 
-file_name="hmdb51_dataset"
-cd file_name
+
+cd hmdb51_dataset
 
 # Get the current directory
 current_directory=$(pwd)
