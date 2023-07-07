@@ -45,6 +45,12 @@ done
 
 cd ..
 
+# Get the current working directory
+current_dir=$(pwd)
+
+# Print the current working directory
+echo "Current working directory: $current_dir"
+
 
 # Specify the path to the requirements.txt file
 requirements_file="requirements.txt"
