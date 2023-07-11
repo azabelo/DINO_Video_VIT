@@ -80,10 +80,6 @@ class DINO(pl.LightningModule):
     def on_after_backward(self):
         self.student_head.cancel_last_layer_gradients(current_epoch=self.current_epoch)
 
-    # def configure_optimizers(self):
-    #     optim = torch.optim.Adam(self.parameters(), lr=1e-5)
-    #     return optim
-
     def set_params(self, lr_factor, max_epochs):
         self.lr_factor = lr_factor
         self.max_epochs = max_epochs
