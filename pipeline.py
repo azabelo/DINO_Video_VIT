@@ -75,6 +75,7 @@ class DINO(pl.LightningModule):
         student_out = [self.forward(view) for view in views]
         loss = self.criterion(teacher_out, student_out, epoch=self.current_epoch)
         wandb.log({"pretraining_loss": loss})
+        torch.cuda.empty_cache()
         return loss
 
     def on_after_backward(self):
