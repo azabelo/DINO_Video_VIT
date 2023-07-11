@@ -2,7 +2,7 @@ import os
 import glob
 import torch
 from torchvision.io import read_video
-import cv2
+from cv2 import resize
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -40,7 +40,7 @@ class CustomDataset(torch.utils.data.Dataset):
             frame = np.array(frame)
 
             # Resize frame if needed
-            frame = cv2.resize(frame, (224, 224))
+            frame = resize(frame, (224, 224))
 
             # Convert frame to torch tensor
             frame = torch.from_numpy(frame.transpose(2, 0, 1)).float()
