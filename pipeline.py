@@ -37,7 +37,6 @@ class DINO(pl.LightningModule):
             heads=4,  # Number of attention heads
             mlp_dim=1024  # Hidden dimension of the MLP
         )
-        print(backbone)
 
         self.student_backbone = backbone
         self.student_head = DINOProjectionHead(
@@ -53,19 +52,19 @@ class DINO(pl.LightningModule):
         self.criterion = DINOLoss(output_dim=2048, warmup_teacher_temp_epochs=5)
 
     def forward(self, x):
-        print("forward student")
+        #print("forward student")
         y = self.student_backbone(x).flatten(start_dim=1)
         z = self.student_head(y)
         return z
 
     def forward_teacher(self, x):
-        print("forward teacher")
+        #print("forward teacher")
         y = self.teacher_backbone(x).flatten(start_dim=1)
         z = self.teacher_head(y)
         return z
 
     def training_step(self, batch, batch_idx):
-        print("training step")
+        #print("training step")
         momentum = cosine_schedule(self.current_epoch, 10, 0.996, 1)
         update_momentum(self.student_backbone, self.teacher_backbone, m=momentum)
         update_momentum(self.student_head, self.teacher_head, m=momentum)
@@ -107,7 +106,7 @@ def pretrain(path_to_hmdb51):
 
     #params
     bs = 1
-    num_workers = 0
+    num_workers = 32
     lr_factor = bs / 256
     max_epochs = 10
 
