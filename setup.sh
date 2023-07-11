@@ -63,7 +63,7 @@ echo "Current working directory: $current_dir"
 
 
 # Specify the path to the requirements.txt file
-requirements_file="organized/requirements.txt"
+requirements_file="requirements.txt"
 
 # Check if requirements.txt file exists
 if [ ! -f "$requirements_file" ]; then
