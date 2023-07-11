@@ -13,10 +13,10 @@ fi
 
 
 #unzip big file
-unrar x "$file_name"
-
-
+mkdir hmdb51_unrared
+mv hmdb51_dataset.rar hmdb51_unrared/hmdb51_dataset.rar
 cd hmdb51_unrared
+unrar x hmdb51_dataset.rar
 
 # Get the current directory
 current_directory=$(pwd)
