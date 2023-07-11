@@ -46,11 +46,11 @@ class CustomDataset(torch.utils.data.Dataset):
             frames.append(frame)
 
         video_tensor = torch.stack(frames)  # Stack frames along the time dimension
-
+        print(type(video_tensor))
         #apply transform to video
         dino_transform = DINOVideoTransform(global_crop_size=(224, 224, 80), local_crop_size=(224, 224, 80))
         video_tensor = dino_transform(video_tensor)
-        print(video_tensor.shape)
+        print(type(video_tensor))
         return video_tensor, label
 
 def get_hmdb51_dataset(path_to_hmdb51):
