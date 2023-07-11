@@ -36,7 +36,7 @@ for rar_file in $rar_files; do
 done
 
 ## Delete all .rar files in the current directory
-#rm *.rar
+rm *.rarc
 
 cd ..
 
