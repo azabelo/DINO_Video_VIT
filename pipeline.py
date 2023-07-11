@@ -99,7 +99,7 @@ class DINO(pl.LightningModule):
 def pretrain(path_to_hmdb51):
     print("starting pretraining")
     wandb.init(project='DINO Video Pretraining')
-
+    #dataset = get_hmdb51_dataset("hmdb51_unrared")
     dataset = get_hmdb51_dataset(path_to_hmdb51)
     # dino_transform = DINOVideoTransform(global_crop_size=(224,224,160), local_crop_size=(224,224,160))
     dataset = LightlyDataset.from_torch_dataset(dataset)
