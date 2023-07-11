@@ -105,8 +105,8 @@ def pretrain(path_to_hmdb51):
     dataset = LightlyDataset.from_torch_dataset(dataset)
 
     #params
-    bs = 16
-    num_workers = 1
+    bs = 1
+    num_workers = 16
     lr_factor = bs / 256
     max_epochs = 10
 
