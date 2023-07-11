@@ -105,10 +105,10 @@ def pretrain(path_to_hmdb51):
     dataset = LightlyDataset.from_torch_dataset(dataset)
 
     #params
-    bs = 1
+    bs = 8
     num_workers = 32
     lr_factor = bs / 256
-    max_epochs = 10
+    max_epochs = 1
 
     model = DINO()
     model.set_params(lr_factor, max_epochs)
