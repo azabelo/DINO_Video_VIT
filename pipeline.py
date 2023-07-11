@@ -106,7 +106,7 @@ def pretrain(path_to_hmdb51):
 
     #params
     bs = 1
-    num_workers = 16
+    num_workers = 0
     lr_factor = bs / 256
     max_epochs = 10
 
