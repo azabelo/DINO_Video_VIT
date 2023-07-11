@@ -2,7 +2,6 @@ import os
 import glob
 import torch
 from torchvision.io import read_video
-from cv2 import resize
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
