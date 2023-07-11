@@ -38,9 +38,7 @@ class CustomDataset(torch.utils.data.Dataset):
         for frame in video_frames:
             # Convert frame to NumPy array
             frame = np.array(frame)
-
-            # Resize frame if needed
-            frame = resize(frame, (224, 224))
+            # Resize frame if needed (done in transforms later so not needed here)
 
             # Convert frame to torch tensor
             frame = torch.from_numpy(frame.transpose(2, 0, 1)).float()
