@@ -82,4 +82,4 @@ done < "$requirements_file"
 
 cd ..
 #run experiment
-python3 organized/pipeline.py organized/hmdb51_unrared
+python3 pipeline.py hmdb51_unrared

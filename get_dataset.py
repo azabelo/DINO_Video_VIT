@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-from organized.DINO_Video_Transforms import DINOVideoTransform
+from DINO_Video_Transforms import DINOVideoTransform
 
 class CustomDataset(torch.utils.data.Dataset):
     def __init__(self, root_dir, transform=None):

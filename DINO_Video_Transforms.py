@@ -10,7 +10,7 @@ from lightly.transforms.rotation import random_rotation_transform
 from lightly.transforms.solarize import RandomSolarization
 from lightly.transforms.utils import IMAGENET_NORMALIZE
 
-import organized.video_transforms as video_transforms
+import video_transforms as video_transforms
 
 
 class DINOVideoTransform(MultiViewTransform):
