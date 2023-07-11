@@ -40,11 +40,11 @@ class DINO(pl.LightningModule):
 
         self.student_backbone = backbone
         self.student_head = DINOProjectionHead(
-            input_dim, 2048, 256, 2048, batch_norm=True
+            input_dim, 2048, 256, 2048
         )
         self.teacher_backbone = copy.deepcopy(backbone)
         self.teacher_head = DINOProjectionHead(
-            input_dim, 2048, 256, 2048, batch_norm=True
+            input_dim, 2048, 256, 2048
         )
         deactivate_requires_grad(self.teacher_backbone)
         deactivate_requires_grad(self.teacher_head)
