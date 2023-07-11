@@ -50,7 +50,7 @@ class CustomDataset(torch.utils.data.Dataset):
         #apply transform to video
         dino_transform = DINOVideoTransform(global_crop_size=(224, 224, 80), local_crop_size=(224, 224, 80))
         video_tensor = dino_transform(video_tensor)
-        print("got item")
+        print(video_tensor.shape)
         return video_tensor, label
 
 def get_hmdb51_dataset(path_to_hmdb51):
