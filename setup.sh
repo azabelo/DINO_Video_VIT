@@ -61,7 +61,6 @@ current_dir=$(pwd)
 # Print the current working directory
 echo "Current working directory: $current_dir"
 
-
 # Specify the path to the requirements.txt file
 requirements_file="requirements.txt"
 
@@ -81,5 +80,6 @@ while read -r package; do
 done < "$requirements_file"
 
 cd ..
+cd DINO_Video_VIT
 #run experiment
 python3 pipeline.py hmdb51_unrared
