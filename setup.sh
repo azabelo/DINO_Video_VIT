@@ -24,11 +24,9 @@ if ! command -v unrar &> /dev/null; then
     sudo apt-get install unrar
 fi
 
-# Create a directory to extract rar files
-mkdir -p hmdb51_unrared
 
 #unzip big file
-unrar x "$file_name" hmdb51_unrared
+unrar x "$file_name"
 
 
 cd hmdb51_unrared
