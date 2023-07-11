@@ -246,7 +246,6 @@ class DINOViewTransform:
         video = video_transforms.random_space_crop(video,self.crop_scale_space[0], self.crop_scale_space[1])
         video = video_transforms.random_time_crop(video,self.crop_scale_time[0], self.crop_scale_time[1])
         video = video_transforms.resize_video(video, self.crop_size[2], self.crop_size[1])
-        print(type(video))
         video = video_transforms.random_horizontal_flip(video, self.hf_prob)
         video = video_transforms.random_vertical_flip(video, self.vf_prob)
         video = video_transforms.random_rotation(video, self.rr_prob, 0, self.rr_degrees)
@@ -259,5 +258,4 @@ class DINOViewTransform:
         video = video_transforms.random_solarize(video, self.solarization_prob)
         # maybe include normalize
         video = video.permute(1,0,2,3)
-        print(type(video))
         return video
