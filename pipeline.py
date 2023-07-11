@@ -37,6 +37,7 @@ class DINO(pl.LightningModule):
             heads=12,  # Number of attention heads
             mlp_dim=3072  # Hidden dimension of the MLP
         )
+        print(backbone)
 
         self.student_backbone = backbone
         self.student_head = DINOProjectionHead(

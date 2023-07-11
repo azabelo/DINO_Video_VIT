@@ -33,6 +33,7 @@ done
 rar_files=$(ls -p "$current_directory" | grep -v / | grep -e "\.rar$")
 for rar_file in $rar_files; do
     unrar x "$rar_file"
+    n
 done
 
 ## Delete all .rar files in the current directory
