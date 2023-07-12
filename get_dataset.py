@@ -33,6 +33,8 @@ class CustomDataset(torch.utils.data.Dataset):
         # Read video frames
         video_frames, _, _ = read_video(video_path, pts_unit="sec")
 
+        print("got item")
+
         # Convert video frames to tensor
         frames = []
         for frame in video_frames:
