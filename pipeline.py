@@ -52,19 +52,16 @@ class DINO(pl.LightningModule):
         self.criterion = DINOLoss(output_dim=2048, warmup_teacher_temp_epochs=5)
 
     def forward(self, x):
-        print("forward student")
         y = self.student_backbone(x).flatten(start_dim=1)
         z = self.student_head(y)
         return z
 
     def forward_teacher(self, x):
-        print("forward teacher")
         y = self.teacher_backbone(x).flatten(start_dim=1)
         z = self.teacher_head(y)
         return z
 
     def training_step(self, batch, batch_idx):
-        print("training step")
         momentum = cosine_schedule(self.current_epoch, 10, 0.996, 1)
         update_momentum(self.student_backbone, self.teacher_backbone, m=momentum)
         update_momentum(self.student_head, self.teacher_head, m=momentum)
@@ -79,7 +76,6 @@ class DINO(pl.LightningModule):
         return loss
 
     def on_after_backward(self):
-        print("on after backward")
         self.student_head.cancel_last_layer_gradients(current_epoch=self.current_epoch)
 
     def set_params(self, lr_factor, max_epochs):
