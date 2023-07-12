@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import wandb
 import sys
+import argparse
 
 from vit_modified import ViT
 from get_dataset import get_hmdb51_dataset
@@ -93,7 +94,7 @@ class DINO(pl.LightningModule):
         return [optim], [cosine_scheduler]
 
 
-def pretrain(path_to_hmdb51):
+def pretrain(path_to_hmdb51, args):
     print("starting pretraining")
     wandb.init(project='DINO Video Pretraining')
 
@@ -102,10 +103,10 @@ def pretrain(path_to_hmdb51):
     dataset = LightlyDataset.from_torch_dataset(dataset)
 
     #params
-    bs = 4
+    bs = args.batch_size
     num_workers = 32
     lr_factor = bs / 256
-    max_epochs = 1
+    max_epochs = args.pretrain_epochs
 
     model = DINO()
     model.set_params(lr_factor, max_epochs)
@@ -129,11 +130,18 @@ def pretrain(path_to_hmdb51):
     activate_requires_grad(model.teacher_backbone)
     return model.student_backbone
 
+def getArgs():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--pretrain_epochs', type=int, default=1)
+    parser.add_argument('--batch_size', type=int, default=1)
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Error: Please provide a string as an argument.")
         exit(0)
 
+    args = getArgs()
+
     # Get the input string from the command-line argument
     path_to_hmdb51 = sys.argv[1]
-    pretrained_model = pretrain(path_to_hmdb51)
+    pretrained_model = pretrain(path_to_hmdb51, args)

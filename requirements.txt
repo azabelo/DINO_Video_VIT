@@ -9,3 +9,4 @@ wandb
 vit_pytorch
 opencv-python
 yt_dlp
+argparse
