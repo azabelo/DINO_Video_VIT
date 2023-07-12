@@ -29,6 +29,7 @@ class CustomDataset(torch.utils.data.Dataset):
 
     def __getitem__(self, idx):
         print("getting item")
+        print(self.samples[idx])
         video_path, label = self.samples[idx]
         # Read video frames
         video_frames, _, _ = read_video(video_path, pts_unit="sec")
