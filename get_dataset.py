@@ -57,7 +57,7 @@ class CustomDataset(torch.utils.data.Dataset):
 
         return video_tensor, label
 
-    def video_to_tensor(file_path):
+    def video_to_tensor(self, file_path):
         # Open the video file
         video = cv2.VideoCapture(file_path)
 
