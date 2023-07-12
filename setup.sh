@@ -67,4 +67,4 @@ done < "$requirements_file"
 cd ..
 cd DINO_Video_VIT
 #run experiment
-python3 pipeline.py hmdb51_unrared
+python3 pipeline.py

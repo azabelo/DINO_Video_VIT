@@ -132,18 +132,13 @@ def pretrain(path_to_hmdb51, args):
 
 def getArgs():
     parser = argparse.ArgumentParser()
+    parser.add_argument('--path', type=str, default='hmdb51_unrared')
     parser.add_argument('--pretrain_epochs', type=int, default=1)
     parser.add_argument('--batch_size', type=int, default=1)
     args = parser.parse_args()
     return args
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Error: Please provide a string as an argument.")
-        exit(0)
 
     args = getArgs()
-
-    # Get the input string from the command-line argument
-    path_to_hmdb51 = sys.argv[1]
-    pretrained_model = pretrain(path_to_hmdb51, args)
+    pretrained_model = pretrain(args.path, args)
