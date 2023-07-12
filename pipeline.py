@@ -72,7 +72,6 @@ class DINO(pl.LightningModule):
         student_out = [self.forward(view) for view in views]
         loss = self.criterion(teacher_out, student_out, epoch=self.current_epoch)
         wandb.log({"pretraining_loss": loss})
-        torch.cuda.empty_cache()
         return loss
 
     def on_after_backward(self):
@@ -103,7 +102,7 @@ def pretrain(path_to_hmdb51):
     dataset = LightlyDataset.from_torch_dataset(dataset)
 
     #params
-    bs = 16
+    bs = 4
     num_workers = 32
     lr_factor = bs / 256
     max_epochs = 1
