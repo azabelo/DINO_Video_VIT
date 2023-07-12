@@ -134,6 +134,8 @@ def getArgs():
     parser = argparse.ArgumentParser()
     parser.add_argument('--pretrain_epochs', type=int, default=1)
     parser.add_argument('--batch_size', type=int, default=1)
+    args = parser.parse_args()
+    return args
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
