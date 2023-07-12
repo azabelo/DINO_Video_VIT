@@ -5,6 +5,7 @@ from torchvision.io import read_video
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+import cv2
 from DINO_Video_Transforms import DINOVideoTransform
 
 class CustomDataset(torch.utils.data.Dataset):
@@ -32,7 +33,8 @@ class CustomDataset(torch.utils.data.Dataset):
         print(self.samples[idx])
         video_path, label = self.samples[idx]
         # Read video frames
-        video_frames, _, _ = read_video(video_path, pts_unit="sec")
+        #video_frames, _, _ = read_video(video_path, pts_unit="sec")
+        video_frames = self.video_to_tensor(video_path)
 
         print("got item")
 
@@ -54,6 +56,33 @@ class CustomDataset(torch.utils.data.Dataset):
         video_tensor = dino_transform(video_tensor)
 
         return video_tensor, label
+
+    def video_to_tensor(file_path):
+        # Open the video file
+        video = cv2.VideoCapture(file_path)
+
+        frames = []
+        while True:
+            # Read a frame from the video
+            ret, frame = video.read()
+
+            # Break the loop if no more frames are available
+            if not ret:
+                break
+
+            # Convert the frame to RGB format
+            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+            # Convert the frame to a PyTorch tensor
+            frame_tensor = torch.from_numpy(frame_rgb)
+
+            # Append the frame tensor to the list of frames
+            frames.append(frame_tensor)
+
+        # Stack the frames tensor along the time dimension
+        video_tensor = torch.stack(frames, dim=0)
+
+        return video_tensor
 
 def get_hmdb51_dataset(path_to_hmdb51):
 
