@@ -118,7 +118,7 @@ def pretrain(path_to_hmdb51):
     dataloader = torch.utils.data.DataLoader(
         dataset,
         batch_size=bs,
-        shuffle=True,
+        shuffle=False,
         drop_last=True,
         num_workers=num_workers
     )
