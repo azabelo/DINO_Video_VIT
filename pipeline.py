@@ -204,7 +204,7 @@ def supervised_train(model, path_to_hmdb51, args):
     wandb.config.update(args)
 
     #create a transform to resize the video to 112x112x40
-    resize_transform = Resize_Transform(112,40)
+    resize_transform = Resize_Transform(40,112)
     dataset = get_hmdb51_dataset(path_to_hmdb51, resize_transform)
     dataset = LightlyDataset.from_torch_dataset(dataset)
     train_dataset, val_dataset = torch.utils.data.random_split(dataset, [int(0.8 * len(dataset)), len(dataset) - int(0.8 * len(dataset))])
