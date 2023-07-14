@@ -140,7 +140,9 @@ class Supervised_trainer(pl.LightningModule):
         #ignore audio
         x, _, y = batch
         print(type(y))
-        print(x.shape)
+        print(y[0])
+        print(y[1])
+        print(y)
         logits = self.model(x)
         loss = self.loss_fn(logits, y)
         preds = torch.argmax(logits, dim=1)
