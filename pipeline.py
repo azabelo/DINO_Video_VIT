@@ -135,10 +135,8 @@ class Supervised_trainer(pl.LightningModule):
         return loss
 
     def validation_step(self, batch, batch_idx):
-        print(type(batch))
-        print(len(batch))
-        print(batch.shape)
-        x, y = batch
+        #ignore audio
+        x, _, y = batch
         logits = self.model(x)
         loss = self.loss_fn(logits, y)
         preds = torch.argmax(logits, dim=1)
