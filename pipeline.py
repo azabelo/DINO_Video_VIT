@@ -185,6 +185,13 @@ def pretrain(path_to_hmdb51, args):
     activate_requires_grad(model.student_backbone)
     return model.student_backbone
 
+class Resize_Transform():
+    def __init__(self, space_size, time_size):
+        self.space_size = space_size
+        self.time_size = time_size
+
+    def __call__(self, video):
+        return resize_video(video, self.space_size, self.time_size)
 
 def supervised_train(model, path_to_hmdb51, args):
     print("starting sup training")
@@ -193,9 +200,7 @@ def supervised_train(model, path_to_hmdb51, args):
     wandb.config.update(args)
 
     #create a transform to resize the video to 112x112x40
-    def resize_to_112x112x40(video):
-        return resize_video(video, 112, 40)
-    resize_transform = resize_to_112x112x40()
+    resize_transform = Resize_Transform(112,40)
     dataset = get_hmdb51_dataset(path_to_hmdb51, resize_transform)
     dataset = LightlyDataset.from_torch_dataset(dataset)
     train_dataset, val_dataset = torch.utils.data.random_split(dataset, [int(0.8 * len(dataset)), len(dataset) - int(0.8 * len(dataset))])
