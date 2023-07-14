@@ -205,7 +205,7 @@ def supervised_train(model, path_to_hmdb51, args):
     resize_transform = Resize_Transform(40,112)
     dataset = get_hmdb51_dataset(path_to_hmdb51, resize_transform)
     dataset = LightlyDataset.from_torch_dataset(dataset)
-    train_dataset, val_dataset = torch.utils.data.random_split(dataset, [int(0 * len(dataset)), len(dataset) - int(0 * len(dataset))])
+    train_dataset, val_dataset = torch.utils.data.random_split(dataset, [int(0.8 * len(dataset)), len(dataset) - int(0.8 * len(dataset))])
     train_loader = torch.utils.data.DataLoader(
         train_dataset,
         batch_size=args.batch_size,
