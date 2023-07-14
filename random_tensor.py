@@ -288,7 +288,7 @@ def show_video(tensor):
     plt.show()
 
 if __name__ == "__main__":
-    tennis_vid = yt_to_tensor("https://www.youtube.com/watch?v=rL1xA-3WXFs")
+    tennis_vid = yt_to_tensor("https://www.youtube.com/shorts/bldnQQwQh2I")
     print(tennis_vid)
 
     show_video(tennis_vid)

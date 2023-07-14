@@ -17,6 +17,8 @@ import numpy as np
 import wandb
 import sys
 import argparse
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 
 from vit_modified import ViT
 from get_dataset import get_hmdb51_dataset
@@ -130,6 +132,21 @@ def pretrain(path_to_hmdb51, args):
     activate_requires_grad(model.teacher_backbone)
     return model.student_backbone
 
+def show_video(tensor):
+    """
+    Show a video
+
+    Args:
+        tensor: video tensor of shape (T, C, H, W)
+    """
+    fig = plt.figure()
+    ims = []
+    for i in range(tensor.shape[0]):
+        im = plt.imshow(tensor[i].permute(1, 2, 0))
+        ims.append([im])
+    ani = animation.ArtistAnimation(fig, ims, interval=50, blit=True, repeat_delay=1000)
+    plt.show()
+
 def getArgs():
     parser = argparse.ArgumentParser()
     parser.add_argument('--path', type=str, default='hmdb51_unrared')
@@ -139,6 +156,6 @@ def getArgs():
     return args
 
 if __name__ == "__main__":
-
+    #prevent division by zero in video time
     args = getArgs()
     pretrained_model = pretrain(args.path, args)
