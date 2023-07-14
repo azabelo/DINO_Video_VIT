@@ -154,7 +154,7 @@ def pretrain(path_to_hmdb51, args):
 
     dino_transform = DINOVideoTransform(global_crop_size=(112, 112, 40), local_crop_size=(112, 112, 40))
 
-    dataset = get_hmdb51_dataset(path_to_hmdb51, transform=dino_transform)
+    dataset = get_hmdb51_dataset(path_to_hmdb51, dino_transform)
     dataset = LightlyDataset.from_torch_dataset(dataset)
 
     #params

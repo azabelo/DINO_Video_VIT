@@ -79,10 +79,10 @@ class CustomDataset(torch.utils.data.Dataset):
 
         return video_tensor
 
-def get_hmdb51_dataset(path_to_hmdb51):
+def get_hmdb51_dataset(path_to_hmdb51, dino_transform):
 
     #path_to_hmdb51 = "other path"
-    dataset = CustomDataset(path_to_hmdb51)
+    dataset = CustomDataset(path_to_hmdb51, dino_transform)
     return dataset
 
 #create a dataloader for the dataset
