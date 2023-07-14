@@ -66,5 +66,6 @@ done < "$requirements_file"
 
 cd ..
 cd DINO_Video_VIT
+
 #run experiment
-python3 pipeline.py
+#python3 pipeline.py

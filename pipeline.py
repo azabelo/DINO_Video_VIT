@@ -11,6 +11,7 @@ from lightly.models.modules import DINOProjectionHead
 from lightly.models.utils import deactivate_requires_grad, update_momentum, activate_requires_grad
 from lightly.transforms.dino_transform import DINOTransform
 from lightly.utils.scheduler import cosine_schedule
+from pytorch_lightning.loggers import WandbLogger
 import torchmetrics
 import matplotlib.pyplot as plt
 import numpy as np
@@ -22,6 +23,7 @@ import matplotlib.animation as animation
 
 from vit_modified import ViT
 from get_dataset import get_hmdb51_dataset
+from DINO_Video_Transforms import DINOVideoTransform
 
 class DINO(pl.LightningModule):
     def __init__(self):
@@ -98,13 +100,61 @@ class DINO(pl.LightningModule):
         return [optim], [cosine_scheduler]
 
 
+class Classifier(nn.Module):
+    def __init__(self, model, num_classes):
+        super().__init__()
+        self.feature_extractor = model
+        self.classifier = nn.Sequential(
+            nn.Linear(2048, num_classes),
+            nn.Softmax(dim=1)
+        )
+
+    def forward(self, x):
+        x = self.feature_extractor(x)
+        batch_size = x.shape[0]
+        x = x.view(batch_size, -1)
+        x = self.classifier(x)
+        return x
+
+class Supervised_trainer(pl.LightningModule):
+    def __init__(self, model):
+        super().__init__()
+        self.model = model
+        self.loss_fn = nn.CrossEntropyLoss()
+        self.accuracy = torchmetrics.Accuracy(task='multiclass', num_classes=51)
+
+    def forward(self, x):
+        return self.model(x)
+
+    def training_step(self, batch, batch_idx):
+        x, y = batch
+        logits = self.model(x)
+        loss = self.loss_fn(logits, y)
+        self.log('train_loss', loss, prog_bar=True)
+        return loss
+
+    def validation_step(self, batch, batch_idx):
+        x, y = batch
+        logits = self.model(x)
+        loss = self.loss_fn(logits, y)
+        preds = torch.argmax(logits, dim=1)
+        acc = self.accuracy(preds, y)
+        self.log('val_loss', loss, prog_bar=False)
+        self.log('val_acc', acc, prog_bar=False)
+
+    def configure_optimizers(self):
+        optimizer = Adam(self.parameters(), lr=1e-5)
+        return optimizer
+
+
 def pretrain(path_to_hmdb51, args):
     print("starting pretraining")
     wandb.init(project='DINO Video Pretraining')
 
+    dino_transform = DINOVideoTransform(global_crop_size=(112, 112, 40), local_crop_size=(112, 112, 40))
+
     dataset = get_hmdb51_dataset(path_to_hmdb51)
-    # dino_transform = DINOVideoTransform(global_crop_size=(224,224,160), local_crop_size=(224,224,160))
-    dataset = LightlyDataset.from_torch_dataset(dataset)
+    dataset = LightlyDataset.from_torch_dataset(dataset, transform=dino_transform)
 
     #params
     bs = args.batch_size
@@ -131,9 +181,40 @@ def pretrain(path_to_hmdb51, args):
     wandb.finish()
 
     # we need to reactivate requires grad to perform supervised backpropagation later
-    activate_requires_grad(model.teacher_backbone)
+    activate_requires_grad(model.student_backbone)
     return model.student_backbone
 
+
+def supervised_train(model, path_to_hmdb51, args):
+    print("starting sup training")
+    wandb.init(project='HMDB-51 video classification')
+    # Log the arguments to wandb
+    wandb.config.update(args)
+
+    dataset = get_hmdb51_dataset(path_to_hmdb51)
+    dataset = LightlyDataset.from_torch_dataset(dataset)
+    train_dataset, val_dataset = torch.utils.data.random_split(dataset, [int(0.8 * len(dataset)), len(dataset) - int(0.8 * len(dataset))])
+    train_loader = torch.utils.data.DataLoader(
+        train_dataset,
+        batch_size=args.batch_size,
+        shuffle=True)
+    val_loader = torch.utils.data.DataLoader(
+        val_dataset,
+        batch_size=args.batch_size,
+        shuffle=False)
+
+    sup_trainer = Supervised_trainer(model)
+
+    accelerator = "gpu" if torch.cuda.is_available() else "cpu"
+
+    wandb_logger = WandbLogger(project='sup training', log_model=True)
+    # Create a PyTorch Lightning trainer
+    trainer = pl.Trainer(max_epochs=args.supervised_epochs, devices=1, accelerator=accelerator, logger=wandb_logger)
+
+    # Train the model
+    trainer.fit(sup_trainer, train_loader, val_dataloaders=val_loader)
+
+    wandb.finish()
 def show_video(tensor):
     """
     Show a video
@@ -153,11 +234,15 @@ def getArgs():
     parser = argparse.ArgumentParser()
     parser.add_argument('--path', type=str, default='hmdb51_unrared')
     parser.add_argument('--pretrain_epochs', type=int, default=1)
+    parser.add_argument('--supervised_epochs', type=int, default=1)
     parser.add_argument('--batch_size', type=int, default=1)
+    parser.add_argument('--sup_batch_size', type=int, default=1)
     args = parser.parse_args()
     return args
 
 if __name__ == "__main__":
-    #prevent division by zero in video time
+    #prevent division by zero in video time?
     args = getArgs()
     pretrained_model = pretrain(args.path, args)
+    classifier = Classifier(pretrained_model, 51)
+    supervised_train(classifier, args.path, args)
