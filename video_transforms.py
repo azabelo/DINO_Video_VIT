@@ -24,6 +24,7 @@ def random_time_crop(video, min_crop_ratio, max_crop_ratio):
     crop_length = math.ceil(time_length * crop_ratio)
     if crop_length == 0:
         crop_length = 1
+
     start_idx = torch.randint(low=0, high=time_length - crop_length + 1, size=(1,)).item()
     return video[start_idx:start_idx + crop_length, :, :, :]
 
