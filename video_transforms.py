@@ -20,7 +20,10 @@ def random_time_crop(video, min_crop_ratio, max_crop_ratio):
     time_length = video.shape[0]
     assert time_length >= 2
     crop_ratio = torch.rand((1,)).item() * (max_crop_ratio - min_crop_ratio) + min_crop_ratio
-    crop_length = int(time_length * crop_ratio)
+    #if not ceiling then you may get division by zero
+    crop_length = math.ceil(time_length * crop_ratio)
+    if crop_length == 0:
+        crop_length = 1
     start_idx = torch.randint(low=0, high=time_length - crop_length + 1, size=(1,)).item()
     return video[start_idx:start_idx + crop_length, :, :, :]
 
@@ -40,8 +43,13 @@ def random_space_crop(video, min_crop_ratio, max_crop_ratio):
     width = video.shape[3]
     assert height >= 2 and width >= 2
     crop_ratio = torch.rand((1,)).item() * (max_crop_ratio - min_crop_ratio) + min_crop_ratio
-    crop_height = int(height * crop_ratio)
-    crop_width = int(width * crop_ratio)
+    # if not ceiling then you may get division by zero
+    crop_height = math.ceil(height * crop_ratio)
+    crop_width = math.ceil(width * crop_ratio)
+    if crop_width == 0:
+        crop_width = 1
+    if crop_height == 0:
+        crop_height = 1
     start_height_idx = torch.randint(low=0, high=height - crop_height + 1, size=(1,)).item()
     start_width_idx = torch.randint(low=0, high=width - crop_width + 1, size=(1,)).item()
     return video[:, :, start_height_idx:start_height_idx + crop_height, start_width_idx:start_width_idx + crop_width]
