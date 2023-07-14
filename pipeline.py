@@ -195,7 +195,7 @@ class Resize_Transform():
         self.time_size = time_size
 
     def __call__(self, video):
-        return resize_video(video, self.space_size, self.time_size)
+        return resize_video(video, self.space_size, self.time_size).permute(0,2,1,3,4)
 
 def supervised_train(model, path_to_hmdb51, args):
     print("starting sup training")
