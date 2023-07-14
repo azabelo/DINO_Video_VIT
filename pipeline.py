@@ -128,18 +128,16 @@ class Supervised_trainer(pl.LightningModule):
         return self.model(x)
 
     def training_step(self, batch, batch_idx):
-        # ignore audio
+        # ignore audio?
         x, y, _ = batch
-        print(y)
         logits = self.model(x)
         loss = self.loss_fn(logits, y)
         self.log('train_loss', loss, prog_bar=True)
         return loss
 
     def validation_step(self, batch, batch_idx):
-        #ignore audio
+        #ignore audio?
         x, y, _ = batch
-        print(y)
         logits = self.model(x)
         loss = self.loss_fn(logits, y)
         preds = torch.argmax(logits, dim=1)
