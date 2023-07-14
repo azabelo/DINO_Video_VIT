@@ -24,6 +24,7 @@ import matplotlib.animation as animation
 from vit_modified import ViT
 from get_dataset import get_hmdb51_dataset
 from DINO_Video_Transforms import DINOVideoTransform
+from video_transforms import resize_video
 
 class DINO(pl.LightningModule):
     def __init__(self):
@@ -153,8 +154,8 @@ def pretrain(path_to_hmdb51, args):
 
     dino_transform = DINOVideoTransform(global_crop_size=(112, 112, 40), local_crop_size=(112, 112, 40))
 
-    dataset = get_hmdb51_dataset(path_to_hmdb51)
-    dataset = LightlyDataset.from_torch_dataset(dataset, transform=dino_transform)
+    dataset = get_hmdb51_dataset(path_to_hmdb51, transform=dino_transform)
+    dataset = LightlyDataset.from_torch_dataset(dataset)
 
     #params
     bs = args.batch_size
@@ -191,7 +192,11 @@ def supervised_train(model, path_to_hmdb51, args):
     # Log the arguments to wandb
     wandb.config.update(args)
 
-    dataset = get_hmdb51_dataset(path_to_hmdb51)
+    #create a transform to resize the video to 112x112x40
+    def resize_to_112x112x40(video):
+        return resize_video(video, 112, 40)
+    resize_transform = resize_to_112x112x40()
+    dataset = get_hmdb51_dataset(path_to_hmdb51, resize_transform)
     dataset = LightlyDataset.from_torch_dataset(dataset)
     train_dataset, val_dataset = torch.utils.data.random_split(dataset, [int(0.8 * len(dataset)), len(dataset) - int(0.8 * len(dataset))])
     train_loader = torch.utils.data.DataLoader(

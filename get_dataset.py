@@ -47,9 +47,8 @@ class CustomDataset(torch.utils.data.Dataset):
             frames.append(frame)
 
         video_tensor = torch.stack(frames)  # Stack frames along the time dimension
-        # #apply transform to video
-        # dino_transform = DINOVideoTransform(global_crop_size=(112, 112, 40), local_crop_size=(112, 112, 40))
-        # video_tensor = dino_transform(video_tensor)
+        # #apply transform to video (there should at least be resizing)
+        video_tensor = self.transform(video_tensor)
 
         return video_tensor, label
 
