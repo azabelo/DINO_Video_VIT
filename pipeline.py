@@ -36,7 +36,7 @@ class DINO(pl.LightningModule):
             image_size=112,  # Input image size
             image_time=40,  # Input image time
             patch_size=16,  # Patch size
-            patch_time=7,  # Patch time
+            patch_time=8,  # Patch time
             num_classes=input_dim,  # Number of output classes
             dim=768,  # Embedding dimension
             depth=12,  # Number of transformer blocks
@@ -128,7 +128,9 @@ class Supervised_trainer(pl.LightningModule):
         return self.model(x)
 
     def training_step(self, batch, batch_idx):
-        x, y = batch
+        # ignore audio
+        x, _, y = batch
+        print(x.shape)
         logits = self.model(x)
         loss = self.loss_fn(logits, y)
         self.log('train_loss', loss, prog_bar=True)
@@ -137,6 +139,7 @@ class Supervised_trainer(pl.LightningModule):
     def validation_step(self, batch, batch_idx):
         #ignore audio
         x, _, y = batch
+        print(x.shape)
         logits = self.model(x)
         loss = self.loss_fn(logits, y)
         preds = torch.argmax(logits, dim=1)
