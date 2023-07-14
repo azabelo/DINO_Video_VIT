@@ -36,7 +36,7 @@ class DINO(pl.LightningModule):
             image_size=112,  # Input image size
             image_time=40,  # Input image time
             patch_size=16,  # Patch size
-            patch_time=8,  # Patch time
+            patch_time=7,  # Patch time
             num_classes=input_dim,  # Number of output classes
             dim=768,  # Embedding dimension
             depth=12,  # Number of transformer blocks
