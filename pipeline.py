@@ -75,6 +75,8 @@ class DINO(pl.LightningModule):
         student_out = [self.forward(view) for view in views]
         loss = self.criterion(teacher_out, student_out, epoch=self.current_epoch)
         wandb.log({"pretraining_loss": loss})
+        gpu_memory = torch.cuda.memory_allocated()
+        wandb.log({"GPU Memory": gpu_memory})
         return loss
 
     def on_after_backward(self):
