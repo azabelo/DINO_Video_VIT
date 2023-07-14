@@ -140,8 +140,10 @@ class Supervised_trainer(pl.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         #ignore audio
-        x, _, y = batch
-        print(y)
+        x, z, y = batch
+        print(z)
+        print(z.shape)
+        print(x.shape)
         logits = self.model(x)
         loss = self.loss_fn(logits, y)
         preds = torch.argmax(logits, dim=1)
@@ -225,7 +227,7 @@ def supervised_train(model, path_to_hmdb51, args):
 
     accelerator = "gpu" if torch.cuda.is_available() else "cpu"
 
-    wandb_logger = WandbLogger(project='sup training', log_model=True)
+    wandb_logger = WandbLogger(project='HMDB-51 video classification', log_model=True)
     # Create a PyTorch Lightning trainer
     trainer = pl.Trainer(max_epochs=args.supervised_epochs, devices=1, accelerator=accelerator, logger=wandb_logger)
 
