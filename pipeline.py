@@ -211,11 +211,13 @@ def supervised_train(model, path_to_hmdb51, args):
     train_loader = torch.utils.data.DataLoader(
         train_dataset,
         batch_size=args.batch_size,
-        shuffle=True)
+        shuffle=True,
+        num_workers=32)
     val_loader = torch.utils.data.DataLoader(
         val_dataset,
         batch_size=args.batch_size,
-        shuffle=False)
+        shuffle=False,
+        num_workers=32)
 
     sup_trainer = Supervised_trainer(model)
 

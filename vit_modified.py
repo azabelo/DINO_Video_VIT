@@ -115,6 +115,7 @@ class ViT(nn.Module):
         )
 
     def forward(self, vid):
+        print(vid.shape)
         x = self.to_patch_embedding(vid)
         b, n, _ = x.shape
 
